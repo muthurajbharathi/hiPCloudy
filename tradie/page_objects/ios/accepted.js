@@ -1,0 +1,24 @@
+// Objects for accepted screen
+/* eslint max-len:0*/
+exports.acceptedSubTab; // todo
+exports.hiredSubTab; // todo
+exports.completedSubTab; // todo
+exports.selectedSubTab; // todo
+exports.consumerName; // todo
+exports.consumerSuburb; // todo
+exports.consumerPhone; // todo
+exports.consumerEmail; // todo
+exports.jobDescription; // todo
+exports.jobDetails; // todo
+exports.jobID; // todo
+exports.jobMessageBtn; // todo
+exports.jobMarkHiredBtn; // todo
+exports.jobOverflowBtn; // todo
+exports.jobCollectPayment; // todo
+exports.callBtn; // todo
+exports.starBtn; // todo
+exports.requestRec; // todo
+exports.waitlistLabel; // todo
+exports.paymentLbl; // todo
+exports.confirmBtn; // todo
+exports.negativeBtn; // todo

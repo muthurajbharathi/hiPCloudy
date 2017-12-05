@@ -1,0 +1,25 @@
+{
+  "desiredCapabilities": {
+    "launchTimeout" : 90000,
+    "CommandTimeout" : 600,
+    "appPackage": "com.hip.tradie.android",
+    "appActivity": ".ui.MainActivity",
+    "rotatable" : true
+  },
+  "logLevel" : "verbose",
+  "logOutput" : "./log/",
+  "protocol" : "https",
+  "host" : "device.pcloudy.com",
+  "port" : 443,
+  "coloredLogs" : true,
+  "bail" : 0,
+  "screenshotPath" : "./errorShots/",
+  "username" : "jaspreetbamrah@hipagesgroup.com.au",
+  "password" : "dvmsq8v7qtnb9knrtvfk6k84",
+  "appname" : "tradie.apk",
+  "oSversion":"6.0.1",
+  "count":1,
+  "platform":"1",
+  "os" :""
+
+}

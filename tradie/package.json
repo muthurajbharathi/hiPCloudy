@@ -1,0 +1,75 @@
+{
+  "name": "android-tradie",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "deepmerge": "^1.3.2",
+    "eslint": "^2.8.0",
+    "test-engineering": "git+ssh://git@github.com/hipagesgroup/test-engineering.git",
+    "tests-api": "git+ssh://git@github.com/hipagesgroup/tests-api.git",
+    "wdio-jasmine-framework": "^0.3.1",
+    "wdio-spec-reporter": "^0.1.0",
+    "webdriverio": "4.7.1",
+    "colors": "^1.1.2",
+    "express": "^4.15.4",
+    "promise": "^8.0.1",
+    "readline": "^1.3.0",
+    "request": "^2.83.0",
+    "tracer": "^0.8.11"
+  },
+  "scripts": {
+    "start": "",
+    "ios": "NODE_USERNAME=deantestaccoun2trorris@gmail.com  NODE_PASSWORD=tradie## ./node_modules/.bin/wdio wdio.ios.conf.js",
+    "android": "NODE_USERNAME=joeyngtradie@mailinator.com  NODE_PASSWORD=tradie## ./node_modules/.bin/wdio wdio.android.conf.js",
+    "IPaywall": "NODE_USERNAME=hippaymentstest4@mailinator.com  NODE_PASSWORD=hbV75dSp ./node_modules/.bin/wdio wdio.ios.conf.js",
+    "APaywall": "NODE_USERNAME=hippaymentstest4@mailinator.com  NODE_PASSWORD=hbV75dSp ./node_modules/.bin/wdio wdio.android.conf.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint --fix .",
+    "sauce": "./node_modules/.bin/wdio wdio.conf.sauce.js --suite=smoke",
+    "pCloudy": "./node_modules/.bin/wdio wdio.conf.pcloudy.js --suite=sanity"
+  },
+  "keywords": [],
+  "contributors": [
+    "Xenia <xeniasvechnikova@hipagesgroup.com.au>",
+    "Ridhi <ridhishad@hipagesgroup.com.au>",
+    "Ray <rayru@hipagesgroup.com.au>"
+  ],
+  "license": "ISC",
+  "devDependencies": {
+    "babel-eslint": "^7.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-runtime": "^6.26.0",
+    "eslint-config-hipages": "1.0.1",
+    "eslint-loader": "^1.5.0",
+    "eslint-plugin-import": "^1.12.0",
+    "eslint_d": "^4.0.1",
+    "karma-jasmine-spec-tags": "^1.0.1",
+    "wdio-appium-service": "^0.2.3",
+    "wdio-sauce-service": "^0.3.1"
+  },
+  "eslintConfig": {
+    "extends": "hipages",
+    "env": {
+      "node": true,
+      "jasmine": true
+    },
+    "globals": {
+      "expect": true,
+      "describe": true,
+      "before": true,
+      "beforeEach": true,
+      "after": true,
+      "afterEach": true,
+      "it": true,
+      "should": true,
+      "browser": true,
+      "browserA": true,
+      "mock": true,
+      "jasmine": true
+    },
+    "parser": "babel-eslint"
+  },
+  "repository": "https://github.com/hipagesgroup/tests-mobile/tree/master/android-tradie",
+  "private": true
+}

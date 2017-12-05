@@ -1,0 +1,8 @@
+*.log
+node_modules
+errorShots
+.DS_Store
+tradie.apk
+*.apk
+*.app
+*.ipa

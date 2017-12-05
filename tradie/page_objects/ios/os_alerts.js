@@ -1,0 +1,3 @@
+// iOS 10 changed the dialog to "allow", don't think we'll be automating iOS8 so ...
+/* eslint-disable max-len */
+exports.alertOkButton = browser.options.desiredCapabilities.platformVersion.startsWith('9.') ? '#OK' : '#Allow';

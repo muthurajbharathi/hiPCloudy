@@ -5,6 +5,8 @@ const tradieConf = require('./wdio.tradie.conf.js');
 
 const baseTradie = merge(baseConf, tradieConf);
 exports.config = merge(baseTradie.config, {
+  username: 'jaspreetbamrah@hipagesgroup.com.au',
+  password: 'dvmsq8v7qtnb9knrtvfk6k84',
   specs: ['./specs/*.js'],
   suites: {
     sanity: [
@@ -25,27 +27,31 @@ exports.config = merge(baseTradie.config, {
   },
 
   capabilities: [{
-    app: `${__dirname}/tradie.apk`
-    // appPackage: 'com.hip.tradie.android',
-    // appActivity: '.ui.SplashActivity'
+    app: `${__dirname}/tradie.apk`,
+    launchTimeout: 90000,
+    CommandTimeout: 600,
+    appPackage: 'com.hip.tradie.android',
+    appActivity: '.ui.MainActivity',
+    rotatable: true
   }],
-
+  host: 'device.pcloudy.com',
+  port: 443,
   appPackage: 'com.hip.tradie.android',
   appActivity: '.ui.MainActivity',
   onPrepare(config, capabilities) {
     var AppiumpCloudy = require('./sampleTest');
     instance = new AppiumpCloudy();
     
-    //instance.appiumInterface(__dirname + '/configs/config-android.json');
-    instance.appiumInterface(__dirname + '/wdio.conf.pcloudy.js');
+    instance.appiumInterface(__dirname + '/configs/config-android.json');
+    //instance.appiumInterface(__dirname + '/wdio.conf.pcloudy.js');
   },
   before(capabilities, specs) {
     const custComs = require('../shared/lib/custom_commands.js');
     custComs.addCustCommands('android', process.cwd());
   },
   onComplete() {
-    const AppiumpCloudy = require('./sampleTest');
+   /* const AppiumpCloudy = require('./sampleTest');
     instance = new AppiumpCloudy();
-    instance.releasePCloudy();
+    instance.releasePCloudy();*/
   }
 });

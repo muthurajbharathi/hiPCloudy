@@ -17,22 +17,21 @@ const rl = readline.createInterface({
 
   });
 var webdriverio = require('webdriverio');
-
+console.log('test');
 module.exports = function appiumPcloudy() {
   return {
     appiumInterface : function(configPath){
-      
+      console.log('configs new ==== ');
       var pointer = this;
       utilServices.fileRead(configPath).then(function(configs) {
           try {
-              //configs = JSON.parse(configs.data);
-              configs = pCloudyConfig.config;
-
+              configs = JSON.parse(configs.data);
+              //configs = pCloudyConfig.config;
+              console.log('config json ==' + configs.host);
               var cloudName = configs.host,
               email = configs.username,
               apiKey = configs.password,
               app = configs.appname;
-              console.log('configs new 11 ==== ' + app);
               pcloudyConnectorServices = new pcloudyConnector(cloudName);
 
           } catch (e) {
@@ -177,12 +176,14 @@ module.exports = function appiumPcloudy() {
 
                                   if( call.version == configs.oSversion && (chosenDevs.length) < configs.count){
                                     logger.info('\n\n ======= ' + call.full_name + ' __ ' + call.version + ' __ ' + call.platform + ' __ '+ call.model + ' has been chosen =======');
+                                    console.log('before here === ' + chosenDevs);
                                     chosenDevs.push(did);
                                     bookedDevsInfo[did] = call;
-                                    console.log('after here dasdad=== ' + chosenDevs);
+                                    console.log('after here === ' + chosenDevs);
                                   }
                               }
                               //logger.debug(devDetails.token + "," + chosenDevs + "," + platform)
+                              console.log('before Book Devices for Appium');
                               pcloudyConnectorServices.BookDevicesForAppium(devDetails.token, 1, chosenDevs, platform, 'pcloudytest-' + platform, "true").then(function(bookDevstatus) {
                                   console.log('book devices ' + JSON.stringify(bookDevstatus));
                                   var bookedDevDetails = JSON.parse(bookDevstatus);
@@ -199,15 +200,18 @@ module.exports = function appiumPcloudy() {
                                       })
                                       //logger.info('app passed ' + uploadedApp);
                                       pcloudyConnectorServices.initAppiumHubForApp(bookedDevDetails.token, uploadedApp).then(function(initAppiumHubForAppStat) {
+                                                        console.log('init Appium Hub For App');
                                                         var initHubresp = JSON.parse(initAppiumHubForAppStat);
                                                         initHubresp = initHubresp.result;
                                                         //logger.debug("initHubresp : "+JSON.stringify(initHubresp));
                                                         if(initHubresp.hasOwnProperty('error')){
+                                                            console.log('if has own property');
                                                             logger.error("Error in initiating Appium hub "+initHubresp.error);
                                                             reject(initHubresp.error);
                                                             //terminate();
                                                         } else {
                                                             pcloudyConnectorServices.getAppiumEndPoint(initHubresp.token).then(function(getAppiumEndPointstat) {
+                                                                console.log('elsee has own property');
                                                                 var endPoint = JSON.parse(getAppiumEndPointstat);
                                                                 logger.debug("getAppiumEndPoint : "+JSON.stringify(endPoint));
                                                                 endPoint = endPoint.result;
@@ -223,6 +227,8 @@ module.exports = function appiumPcloudy() {
                                                                     var totalBokkedDevs = bookedDevices.length;
 
                                                                         bookedDevices.forEach(function(i, index, bookedDevices) {
+                                                                            console.log("insideeee booked devicess");
+                                                                            console.log("desired capabilities == " + configs.desiredCapabilities);
                                                                             options.desiredCapabilities = {};
                                                                             options.desiredCapabilities.launchTimeout = configs.desiredCapabilities.host;
                                                                             options.desiredCapabilities.CommandTimeout = configs.desiredCapabilities.CommandTimeout;

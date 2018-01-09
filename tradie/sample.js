@@ -21,8 +21,10 @@ module.exports = function appiumPcloudy() {
       var pointer = this;
       utilServices.fileRead(configPath).then(function(configs) {
           try {
+              console.log('before ==' + configs);
               configs = JSON.parse(configs.data);
-
+              console.log(configs.host);
+              
               var cloudName = configs.host,
               email = configs.username,
               apiKey = configs.password,
@@ -257,6 +259,8 @@ module.exports = function appiumPcloudy() {
 
                                                                         bookedDevices.forEach(function(i, index, bookedDevices) {
                                                                             console.log("insideeee booked devicess");
+                                                                            console.log("insideeee booked devicess" + configs.host);
+                                                                            console.log("idesiredCapabilities == " + configs.desiredCapabilities.host);
                                                                             options.desiredCapabilities = {};
                                                                             options.desiredCapabilities.launchTimeout = configs.desiredCapabilities.host;
                                                                             options.desiredCapabilities.CommandTimeout = configs.desiredCapabilities.CommandTimeout;
@@ -291,7 +295,7 @@ module.exports = function appiumPcloudy() {
 
                                                                             
                                                                             var model = i.model,rid = i.rid;
-                                                                            setTimeout(function(){
+                                                                            /*setTimeout(function(){
                                                                                 logger.info('Going to end webdriver client of '+model);
                                                                                 client.end();
                                                                                 pcloudyConnectorServices.releaseAppiumsession(token,rid,0).then(function(releaseAppiumsession){
@@ -307,7 +311,7 @@ module.exports = function appiumPcloudy() {
                                                                                       logger.error('\n releaseAppiumsession '+JSON.stringify(releaseAppiumsessionErr));
                                                                                   })
 
-                                                                            },60000)
+                                                                            },60000)*/
                                                                             /*################################################## Add your code ################################################*/
                                                                             
 

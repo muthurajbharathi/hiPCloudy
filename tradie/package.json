@@ -20,8 +20,8 @@
   },
   "scripts": {
     "start": "",
-    "ios": "NODE_USERNAME=deantestaccoun2trorris@gmail.com  NODE_PASSWORD=tradie## ./node_modules/.bin/wdio wdio.ios.conf.js",
-    "android": "NODE_USERNAME=joeyngtradie@mailinator.com  NODE_PASSWORD=tradie## ./node_modules/.bin/wdio wdio.android.conf.js",
+    "ios": "NODE_USERNAME=deantestaccoun2trorris@gmail.com  NODE_PASSWORD=tradie## ./node_modules/.bin/wdio wdio.ios.conf.js --suite=sanity",
+    "android": "NODE_USERNAME=joeyngtradie@mailinator.com  NODE_PASSWORD=tradie## ./node_modules/.bin/wdio wdio.android.conf.js --suite=sanity",
     "IPaywall": "NODE_USERNAME=hippaymentstest4@mailinator.com  NODE_PASSWORD=hbV75dSp ./node_modules/.bin/wdio wdio.ios.conf.js",
     "APaywall": "NODE_USERNAME=hippaymentstest4@mailinator.com  NODE_PASSWORD=hbV75dSp ./node_modules/.bin/wdio wdio.android.conf.js",
     "test": "echo \"Error: no test specified\" && exit 1",

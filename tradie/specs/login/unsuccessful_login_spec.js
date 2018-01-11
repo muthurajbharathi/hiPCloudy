@@ -3,10 +3,10 @@ describe('Login System', () => {
   let dialog;
 
   beforeAll(() => {
-    /*var AppiumpCloudy = require('../../sample.js');
+    var AppiumpCloudy = require('../../sample.js');
     instance = new AppiumpCloudy();
     
-    instance.appiumInterface('../../configs/config-android.json');*/
+    instance.appiumInterface('../../configs/config-android.json');
 
     signIn = browser.getLib('signin');
     dialog = browser.getLib('dialog');

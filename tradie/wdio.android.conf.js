@@ -34,16 +34,21 @@ exports.config = merge(baseTradie.config, {
     appActivity: '.ui.MainActivity',
     rotatable: true
   }],
+  protocol: 'https',
   host: 'device.pcloudy.com',
   port: 443,
+  appname: 'tradie.apk',
+  oSversion: '6.0.1',
+  count: 1,
+  platform: '1',
   appPackage: 'com.hip.tradie.android',
   appActivity: '.ui.MainActivity',
   onPrepare(config, capabilities) {
-    var AppiumpCloudy = require('./sampleTest');
+    /*var AppiumpCloudy = require('./sample');
     instance = new AppiumpCloudy();
     
     instance.appiumInterface(__dirname + '/configs/config-android.json');
-    //instance.appiumInterface(__dirname + '/wdio.conf.pcloudy.js');
+    //instance.appiumInterface(__dirname + '/wdio.conf.pcloudy.js');*/
   },
   before(capabilities, specs) {
     const custComs = require('../shared/lib/custom_commands.js');

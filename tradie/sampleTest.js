@@ -5,7 +5,7 @@ var pCloudyConfig = require('./wdio.conf.pcloudy.js');
 var utils = require('./helpers/utils.js'),
 utilServices = new utils(),
 readline = require('readline'),
-configPath = './configs/config-android.json',
+configPath = '/configs/config-android.json',
 configs = {},
 token = '',
 model = '',
@@ -230,7 +230,7 @@ module.exports = function appiumPcloudy() {
                                                                             console.log("insideeee booked devicess");
                                                                             console.log("desired capabilities == " + configs.desiredCapabilities);
                                                                             options.desiredCapabilities = {};
-                                                                            options.desiredCapabilities.launchTimeout = configs.desiredCapabilities.host;
+                                                                            options.desiredCapabilities.launchTimeout = configs.desiredCapabilities.launchTimeout;
                                                                             options.desiredCapabilities.CommandTimeout = configs.desiredCapabilities.CommandTimeout;
                                                                             options.desiredCapabilities.deviceName = i.capabilities.deviceName;
                                                                             options.desiredCapabilities.browserName = i.capabilities.browserName;

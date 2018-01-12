@@ -260,9 +260,9 @@ module.exports = function appiumPcloudy() {
                                                                         bookedDevices.forEach(function(i, index, bookedDevices) {
                                                                             console.log("insideeee booked devicess");
                                                                             console.log("insideeee booked devicess" + configs.host);
-                                                                            console.log("idesiredCapabilities == " + configs.desiredCapabilities.host);
+                                                                            console.log("idesiredCapabilities == " + configs.host);
                                                                             options.desiredCapabilities = {};
-                                                                            options.desiredCapabilities.launchTimeout = configs.desiredCapabilities.host;
+                                                                            options.desiredCapabilities.launchTimeout = configs.desiredCapabilities.launchTimeout;
                                                                             options.desiredCapabilities.CommandTimeout = configs.desiredCapabilities.CommandTimeout;
                                                                             options.desiredCapabilities.deviceName = i.capabilities.deviceName;
                                                                             options.desiredCapabilities.browserName = i.capabilities.browserName;

@@ -11,8 +11,8 @@ exports.config = merge(baseTradie.config, {
       // '../shared/specs/message_centre/messaging_spec.js',
       // '../shared/specs/message_centre/attachment_spec.js',
       //'./specs/login/successful_login_spec.js'
-     // './specs/login/unsuccessful_login_spec.js'
-     './specs/invites_accept_spec.js'
+        './specs/login/unsuccessful_login_spec.js'
+     //'./specs/invites_accept_spec.js'
       
     ],
     login: ['./specs/login_system_spec.js'],
@@ -32,9 +32,19 @@ exports.config = merge(baseTradie.config, {
 
   appPackage: 'com.hip.tradie.android',
   appActivity: '.ui.MainActivity',
-
+  onPrepare(config, capabilities) {
+    var AppiumpCloudy = require('./sampleTest');
+    instance = new AppiumpCloudy();
+    instance.appiumInterface(__dirname + '/configs/config-android.json');
+    //instance.appiumInterface(__dirname + '/wdio.conf.pcloudy.js');
+  },
   before(capabilities, specs) {
     const custComs = require('../shared/lib/custom_commands.js');
     custComs.addCustCommands('android', process.cwd());
+  },
+  onComplete() {
+    const AppiumpCloudy = require('./sampleTest');
+    instance = new AppiumpCloudy();
+    instance.releasePCloudy();
   }
 });

@@ -42,14 +42,17 @@ exports.config = merge(baseTradie.config, {
     });
     //try commenting other parts wait till u get any of this response after that you decide what to do...
     //instance.appiumInterface(__dirname + '/wdio.conf.pcloudy.js');
+    //this instance has to be saved and used to release in onComplete.
   },
   before(capabilities, specs) {
-    const custComs = require('../shared/lib/custom_commands.js');
-    custComs.addCustCommands('android', process.cwd());
+    /*const custComs = require('../shared/lib/custom_commands.js');
+    custComs.addCustCommands('android', process.cwd());*/
+    console.log("on before ...");
   },
   onComplete() {
-    const AppiumpCloudy = require('./sampleTest');
+    /*const AppiumpCloudy = require('./sampleTest');
     instance = new AppiumpCloudy();
-    instance.releasePCloudy();
+    instance.releasePCloudy();*/
+      console.log("on complete ...");
   }
 });

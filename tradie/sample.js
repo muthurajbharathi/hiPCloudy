@@ -24,7 +24,7 @@ module.exports = function appiumPcloudy() {
               console.log('before ==' + configs);
               configs = JSON.parse(configs.data);
               console.log(configs.host);
-              
+
               var cloudName = configs.host,
               email = configs.username,
               apiKey = configs.password,
@@ -145,7 +145,7 @@ module.exports = function appiumPcloudy() {
           logger.warn('error reading config ' + errRead);
           pointer.terminate();
       })
-    },
+    } ,
       appiumCore : function(token, platform, uploadedApp, configs) {
           logger.debug(" token " + token +" p " + platform + " a " + uploadedApp);
           //uploadedApp = "'" + uploadedApp + "'";
@@ -291,9 +291,9 @@ module.exports = function appiumPcloudy() {
                                                                             var client = webdriverio.remote(options)
                                                                             .init().saveScreenshot(configs.screenshotPath + '/pcloudy-' + i.manufacturer + '-' + i.model + '-' + i.version + '-' + i.capabilities.deviceName + '-' + unixTime + '.png');
                                                                             logger.info("*################################################### Add your Appium Code Here  #####################################*");
-                                                                           
 
-                                                                            
+
+
                                                                             var model = i.model,rid = i.rid;
                                                                             /*setTimeout(function(){
                                                                                 logger.info('Going to end webdriver client of '+model);
@@ -313,7 +313,7 @@ module.exports = function appiumPcloudy() {
 
                                                                             },60000)*/
                                                                             /*################################################## Add your code ################################################*/
-                                                                            
+
 
 
                                                                             logger.info(" Webdriver Initiated for  : " + i.model);

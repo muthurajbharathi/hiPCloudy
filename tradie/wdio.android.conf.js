@@ -13,7 +13,7 @@ exports.config = merge(baseTradie.config, {
       //'./specs/login/successful_login_spec.js'
         './specs/login/unsuccessful_login_spec.js'
      //'./specs/invites_accept_spec.js'
-      
+
     ],
     login: ['./specs/login_system_spec.js'],
     messageCentre: ['../shared/specs/message_centre/attachment_spec.js',
@@ -33,9 +33,14 @@ exports.config = merge(baseTradie.config, {
   appPackage: 'com.hip.tradie.android',
   appActivity: '.ui.MainActivity',
   onPrepare(config, capabilities) {
-    var AppiumpCloudy = require('./sampleTest');
+    var AppiumpCloudy = require('./connector');
     instance = new AppiumpCloudy();
-    instance.appiumInterface(__dirname + '/configs/config-android.json');
+    instance.appiumInterface(__dirname + '/configs/config-android.json').then(function(appiumInitResp){
+      console.log("appiumInitResp received  in wdio.android.conf : "+JSON.stringify(appiumInitResp));
+    },function(appiumInitRespError){
+      console.log(" appiumInitRespError received in wdio.android.conf : "+JSON.stringify(appiumInitRespError));
+    });
+    //try commenting other parts wait till u get any of this response after that you decide what to do...
     //instance.appiumInterface(__dirname + '/wdio.conf.pcloudy.js');
   },
   before(capabilities, specs) {

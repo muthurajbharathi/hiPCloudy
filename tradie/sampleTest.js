@@ -46,7 +46,7 @@ module.exports = function appiumPcloudy() {
               } else {
                   logger.info(' token  ====== > ' + response.result.token);
                   token = response.result.token; //saved in global variable
-            
+
                       var platformName = configs.platform,
                       devicePlatform = '-NOT-SELECTED-';
 
@@ -162,7 +162,7 @@ module.exports = function appiumPcloudy() {
                       availabledevs = [],
                       sessionname = '';
                       if (allDevsavilable.length) {
-                         
+
                       } else {
                           logger.warn(" == There no devices available at this time try to book after some time == ");
                           pointer.terminate();
@@ -187,7 +187,7 @@ module.exports = function appiumPcloudy() {
                               pcloudyConnectorServices.BookDevicesForAppium(devDetails.token, 1, chosenDevs, platform, 'pcloudytest-' + platform, "true").then(function(bookDevstatus) {
                                   console.log('book devices ' + JSON.stringify(bookDevstatus));
                                   var bookedDevDetails = JSON.parse(bookDevstatus);
-                                  
+
                                   bookedDevDetails = bookedDevDetails.result;
                                   if(bookedDevDetails.hasOwnProperty('error')){
                                       logger.error("Error while booking devices : "+bookedDevDetails.error);
@@ -259,9 +259,9 @@ module.exports = function appiumPcloudy() {
                                                                             //var client = webdriverio.remote(options)
                                                                             //.init().saveScreenshot(configs.screenshotPath + '/pcloudy-' + i.manufacturer + '-' + i.model + '-' + i.version + '-' + i.capabilities.deviceName + '-' + unixTime + '.png');
                                                                             logger.info("*################################################### Add your Appium Code Here  #####################################*");
-                                                                           
 
-                                                                            
+
+
                                                                            model = i.model,rid = i.rid;
                                                                            /* setTimeout(function(){
                                                                                 logger.info('Going to end webdriver client of '+model);
@@ -281,7 +281,7 @@ module.exports = function appiumPcloudy() {
 
                                                                             },60000)*/
                                                                             /*################################################## Add your code ################################################*/
-                                                                            
+
 
 
                                                                             logger.info(" Webdriver Initiated for  : " + i.model);
@@ -340,7 +340,7 @@ module.exports = function appiumPcloudy() {
       releasePCloudy: function(){
           console.log('after the script ----------- RELEASE' + rid);
           logger.info('Going to end webdriver client of '+model);
-         
+
           pcloudyConnectorServices.releaseAppiumsession(token,rid,0).then(function(releaseAppiumsession){
               logger.info('\n\n Releasing the Appium Session of '+ model);
               var releaseStat = JSON.parse(releaseAppiumsession);

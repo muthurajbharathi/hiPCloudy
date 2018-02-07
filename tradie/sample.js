@@ -33,6 +33,7 @@ module.exports = function appiumPcloudy() {
 
           } catch (e) {
               logger.error(" error initializing configs " + e);
+
           }
           pcloudyConnectorServices.AuthenticateUser(email, apiKey).then(function(resp) {
               //logger.log(JSON.stringify(resp));

@@ -156,7 +156,7 @@ module.exports = function appiumPcloudy() {
               logger.log("appiumInterfaceError "+appiumInterfaceError);
           }
         })
-      return promise;  
+      return promise;
     },
     appiumCore : function(token, platform, uploadedApp, configs) {
           logger.debug(" token " + token +" p " + platform + " a " + uploadedApp);

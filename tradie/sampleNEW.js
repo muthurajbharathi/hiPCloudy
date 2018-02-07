@@ -1,39 +1,35 @@
 var Promise = require('promise'),
 logger = require('./helpers/logger.js'),
 pcloudyConnector = require('./api/pCloudyApiConnector.js');
-var pCloudyConfig = require('./wdio.conf.pcloudy.js');
+
 var utils = require('./helpers/utils.js'),
 utilServices = new utils(),
 readline = require('readline'),
-configPath = '/configs/config-android.json',
+configPath = './configs/config-android.json',
 configs = {},
-token = '',
-model = '',
-rid = '';
-
+token = '';
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 
   });
 var webdriverio = require('webdriverio');
-console.log('test');
+
 module.exports = function appiumPcloudy() {
   return {
     appiumInterface : function(configPath){
-      console.log('configs new ==== ');
       var pointer = this;
       utilServices.fileRead(configPath).then(function(configs) {
           try {
+              console.log('configs first == ' + configs);
               configs = JSON.parse(configs.data);
-              //configs = pCloudyConfig.config;
-              console.log('config json ==' + configs.host);
+              
               var cloudName = configs.host,
               email = configs.username,
               apiKey = configs.password,
               app = configs.appname;
+              console.log('email == ' + configs.username);
               pcloudyConnectorServices = new pcloudyConnector(cloudName);
-
           } catch (e) {
               logger.error(" error initializing configs " + e);
           }
@@ -46,8 +42,9 @@ module.exports = function appiumPcloudy() {
               } else {
                   logger.info(' token  ====== > ' + response.result.token);
                   token = response.result.token; //saved in global variable
-            
-                      var platformName = configs.platform,
+                  rl.question('====================== choose platform  ========================= \n 1 : Android \n  ========= Enter 1 to choose ============= \n', (platform) => {
+                      //logger.info(`You have chosen platform : ${platform}`);
+                      var platformName = platform,
                       devicePlatform = '-NOT-SELECTED-';
 
                       switch (platformName) {
@@ -56,6 +53,7 @@ module.exports = function appiumPcloudy() {
                           break;
                       }
                       logger.info('Chosen platform ' + devicePlatform);
+                      rl.close();
                       var present = false;
                                       pcloudyConnectorServices.GetAvailableApps(token, 0, 'all').then(function(filesinDrive) {
                                           var alreadyPresentfiles = JSON.parse(filesinDrive);
@@ -135,7 +133,7 @@ module.exports = function appiumPcloudy() {
                                           logger.debug("getAvailable apps Error : " + JSON.stringify(getAppsErr));
                                           pointer.terminate();
                                       })
-                 // }) //read line
+                  }) //read line
               }//else
           }, function(err) {
               logger.debug("Error in Authenticating "+JSON.stringify(err));
@@ -146,14 +144,14 @@ module.exports = function appiumPcloudy() {
           pointer.terminate();
       })
     },
-    appiumCore : function(token, platform, uploadedApp, configs) {
+      appiumCore : function(token, platform, uploadedApp, configs) {
           logger.debug(" token " + token +" p " + platform + " a " + uploadedApp);
+          //uploadedApp = "'" + uploadedApp + "'";
           var pointer = this;
           var promise = new Promise(function(resolve, reject) {
               try{
-              pcloudyConnectorServices.GetDevices(token, 1, platform, "true").then(function(devices) {
+              pcloudyConnectorServices.GetDevices(token, 10, platform, "true").then(function(devices) {
                   var devDetails = JSON.parse(devices);
-                  console.log('devDetails === ' + devDetails);
                   devDetails = devDetails.result;
                   if(devDetails.hasOwnProperty('error')){
                       logger.error("Error getting Devices list : "+devDetails.error);
@@ -162,32 +160,54 @@ module.exports = function appiumPcloudy() {
                       availabledevs = [],
                       sessionname = '';
                       if (allDevsavilable.length) {
-                         
+                          logger.info(" == Available devices == ");
+
+                          allDevsavilable.forEach(function(entry) {
+                              logger.info("=========================================================================================");
+                              logger.info(" Full Name : " + entry.full_name);
+                              logger.info(" Device_ID  : " + entry.id);
+                              /*logger.log(" model : "+entry.model);
+                              logger.log(" display name : "+entry.display_name);
+                              logger.log(" version : "+entry.version);
+                              logger.log(" manufacturer : "+entry.manufacturer);
+                              logger.log(" platform : "+entry.platform);
+                              logger.log(" availability : "+entry.available);*/
+                          });
                       } else {
                           logger.warn(" == There no devices available at this time try to book after some time == ");
                           pointer.terminate();
                       }
                       try {
-                           var chosenDevs = [];
-                           var bookedDevsInfo = {};
+                          var chosenDevs = [];
+                          var readdev = readline.createInterface({
+                              input: process.stdin,
+                              output: process.stdout
+                          });
+                          logger.info('================================================================ \n');
+                          readdev.question('\n Enter did value as shown above to select devices (use comma for multiple devices) \n ', (answer) => {
+                              logger.info('================================================================ \n');
 
-                              for(var call of allDevsavilable) {
-                                  var did = call.id;
-
-                                  if( call.version == configs.oSversion && (chosenDevs.length) < configs.count){
-                                    logger.info('\n\n ======= ' + call.full_name + ' __ ' + call.version + ' __ ' + call.platform + ' __ '+ call.model + ' has been chosen =======');
-                                    console.log('before here === ' + chosenDevs);
-                                    chosenDevs.push(did);
-                                    bookedDevsInfo[did] = call;
-                                    console.log('after here === ' + chosenDevs);
+                              logger.info(`You have chosen devices : ${answer}`);
+                              answer = answer.split(',');
+                              chosenDevs = answer;
+                              logger.info('\n\n ======= chosen Devices are =======');
+                              readdev.close();
+                              var bookedDevsInfo = {};
+                              Object.keys(allDevsavilable).forEach(function(key) {
+                                  //console.log(allDevsavilable[key].id);
+                                  var did = allDevsavilable[key].id;
+                                  if (chosenDevs.indexOf(did.toString()) >= 0) {
+                                      bookedDevsInfo[did] = allDevsavilable[key];
                                   }
-                              }
-                              //logger.debug(devDetails.token + "," + chosenDevs + "," + platform)
-                              console.log('before Book Devices for Appium');
-                              pcloudyConnectorServices.BookDevicesForAppium(devDetails.token, 1, chosenDevs, platform, 'pcloudytest-' + platform, "true").then(function(bookDevstatus) {
-                                  console.log('book devices ' + JSON.stringify(bookDevstatus));
+                              });
+
+                              Object.keys(bookedDevsInfo).forEach(function(key) {
+                                  logger.info(' device id ==> ' + bookedDevsInfo[key].id + ', Device name ==> ' + bookedDevsInfo[key].full_name);
+                              })
+                              pcloudyConnectorServices.BookDevicesForAppium(devDetails.token, 5, chosenDevs, platform, 'pcloudytest-' + platform, "true").then(function(bookDevstatus) {
+                                  //logger.log('bookDev '+JSON.stringify(bookDevstatus));
+
                                   var bookedDevDetails = JSON.parse(bookDevstatus);
-                                  
                                   bookedDevDetails = bookedDevDetails.result;
                                   if(bookedDevDetails.hasOwnProperty('error')){
                                       logger.error("Error while booking devices : "+bookedDevDetails.error);
@@ -200,18 +220,15 @@ module.exports = function appiumPcloudy() {
                                       })
                                       //logger.info('app passed ' + uploadedApp);
                                       pcloudyConnectorServices.initAppiumHubForApp(bookedDevDetails.token, uploadedApp).then(function(initAppiumHubForAppStat) {
-                                                        console.log('init Appium Hub For App');
                                                         var initHubresp = JSON.parse(initAppiumHubForAppStat);
                                                         initHubresp = initHubresp.result;
                                                         //logger.debug("initHubresp : "+JSON.stringify(initHubresp));
                                                         if(initHubresp.hasOwnProperty('error')){
-                                                            console.log('if has own property');
                                                             logger.error("Error in initiating Appium hub "+initHubresp.error);
                                                             reject(initHubresp.error);
                                                             //terminate();
                                                         } else {
                                                             pcloudyConnectorServices.getAppiumEndPoint(initHubresp.token).then(function(getAppiumEndPointstat) {
-                                                                console.log('elsee has own property');
                                                                 var endPoint = JSON.parse(getAppiumEndPointstat);
                                                                 logger.debug("getAppiumEndPoint : "+JSON.stringify(endPoint));
                                                                 endPoint = endPoint.result;
@@ -227,10 +244,9 @@ module.exports = function appiumPcloudy() {
                                                                     var totalBokkedDevs = bookedDevices.length;
 
                                                                         bookedDevices.forEach(function(i, index, bookedDevices) {
-                                                                            console.log("insideeee booked devicess");
-                                                                            console.log("desired capabilities == " + configs.desiredCapabilities);
+
                                                                             options.desiredCapabilities = {};
-                                                                            options.desiredCapabilities.launchTimeout = configs.desiredCapabilities.launchTimeout;
+                                                                            options.desiredCapabilities.launchTimeout = configs.desiredCapabilities.host;
                                                                             options.desiredCapabilities.CommandTimeout = configs.desiredCapabilities.CommandTimeout;
                                                                             options.desiredCapabilities.deviceName = i.capabilities.deviceName;
                                                                             options.desiredCapabilities.browserName = i.capabilities.browserName;
@@ -256,14 +272,14 @@ module.exports = function appiumPcloudy() {
                                                                                 unixTime = readableTime;
                                                                             })
 
-                                                                            //var client = webdriverio.remote(options)
-                                                                            //.init().saveScreenshot(configs.screenshotPath + '/pcloudy-' + i.manufacturer + '-' + i.model + '-' + i.version + '-' + i.capabilities.deviceName + '-' + unixTime + '.png');
-                                                                            logger.info("*################################################### Add your Appium Code Here  #####################################*");
-                                                                           
+                                                                            var client = webdriverio.remote(options)
+                                                                            .init().saveScreenshot(configs.screenshotPath + '/pcloudy-' + i.manufacturer + '-' + i.model + '-' + i.version + '-' + i.capabilities.deviceName + '-' + unixTime + '.png');
 
-                                                                            
-                                                                           model = i.model,rid = i.rid;
-                                                                           /* setTimeout(function(){
+
+                                                                            logger.info("*################################################### Add your Appium Code Here  #####################################*");
+
+                                                                            var model = i.model,rid = i.rid;
+                                                                            setTimeout(function(){
                                                                                 logger.info('Going to end webdriver client of '+model);
                                                                                 client.end();
                                                                                 pcloudyConnectorServices.releaseAppiumsession(token,rid,0).then(function(releaseAppiumsession){
@@ -279,28 +295,10 @@ module.exports = function appiumPcloudy() {
                                                                                       logger.error('\n releaseAppiumsession '+JSON.stringify(releaseAppiumsessionErr));
                                                                                   })
 
-                                                                            },60000)*/
+                                                                            },60000)
                                                                             /*################################################## Add your code ################################################*/
-                                                                            console.log("hi jas");
-                                                                            //const jhkasdfjhlhasdf = require("./wdio.android.conf.js").fork;
 
-                                                                            const spawn = require('child_process').spawn;
-const ls = spawn('./node_modules/.bin/wdio', ['wdio.android.conf.js', '--suite=sanity']);
-
-ls.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-});
-
-ls.stderr.on('data', (data) => {
-    console.log(`stderr: ${data}`);
-});
-
-ls.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-});
-
-
-                                                                            logger.info(" Webdriver Initiated for  : " + i.model);
+                                                                            logger.debug(" Webdriver Init : " + i.model);
                                                                             if(bookedDevices[index + 1]){
                                                                                 var next = bookedDevices[index + 1].manufacturer+'--'+bookedDevices[index + 1].model;
                                                                                 logger.debug("Webdriver Init Next : " + ((bookedDevices.length - 1 === index) ? resolve({'status':'done'}) : next));
@@ -324,6 +322,7 @@ ls.on('close', (code) => {
                               logger.debug('bookdevErr ' + JSON.stringify(bookdevErr));
                               reject(bookdevErr);
                           })
+                      }); //rl
                   } catch (exp) {
                       logger.info("Err in appium core : " + exp);
                   }
@@ -352,23 +351,6 @@ ls.on('close', (code) => {
               resolve(time);
           })
           return promise;
-      },
-      releasePCloudy: function(){
-          console.log('after the script ----------- RELEASE' + rid);
-          logger.info('Going to end webdriver client of '+model);
-         
-          pcloudyConnectorServices.releaseAppiumsession(token,rid,0).then(function(releaseAppiumsession){
-              logger.info('\n\n Releasing the Appium Session of '+ model);
-              var releaseStat = JSON.parse(releaseAppiumsession);
-              releaseStat = releaseStat.result;
-              if(releaseStat.hasOwnProperty('error')){
-                  logger.error("\n\n There was a error while releasing appium session "+releaseStat.error);
-              }else{
-                  logger.info('\n\n Status of Appium session release for model : '+model + ' ==  '  +releaseStat.msg);
-              }
-           },function(releaseAppiumsessionErr){
-                  logger.error('\n releaseAppiumsession '+JSON.stringify(releaseAppiumsessionErr));
-        })
       },
       terminate : function(){
           process.exit(0);

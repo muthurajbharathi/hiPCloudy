@@ -1,3 +1,4 @@
+var webdriverio = require('webdriverio');
 describe('Login System', () => {
   let signIn;
   let dialog;

@@ -22,129 +22,141 @@ module.exports = function appiumPcloudy() {
   return {
     appiumInterface : function(configPath){
       console.log('configs new ==== ');
-      var pointer = this;
-      utilServices.fileRead(configPath).then(function(configs) {
-          try {
-              configs = JSON.parse(configs.data);
-              //configs = pCloudyConfig.config;
-              console.log('config json ==' + configs.host);
-              var cloudName = configs.host,
-              email = configs.username,
-              apiKey = configs.password,
-              app = configs.appname;
-              pcloudyConnectorServices = new pcloudyConnector(cloudName);
+      var promise = new Promise(function(resolve, reject) {
+          try{
+              var pointer = this;
+              utilServices.fileRead(configPath).then(function(configs) {
+                  try {
+                      configs = JSON.parse(configs.data);
+                      //configs = pCloudyConfig.config;
+                      console.log('config json ==' + configs.host);
+                      var cloudName = configs.host,
+                      email = configs.username,
+                      apiKey = configs.password,
+                      app = configs.appname;
+                      pcloudyConnectorServices = new pcloudyConnector(cloudName);
 
-          } catch (e) {
-              logger.error(" error initializing configs " + e);
-          }
-          pcloudyConnectorServices.AuthenticateUser(email, apiKey).then(function(resp) {
-              //logger.log(JSON.stringify(resp));
-              var response = JSON.parse(resp);
-              if(response.result.hasOwnProperty('error')){
-                  logger.error("Error in Authenticating : "+response.result.error);
-                  process.exit(0);
-              } else {
-                  logger.info(' token  ====== > ' + response.result.token);
-                  token = response.result.token; //saved in global variable
-            
-                      var platformName = configs.platform,
-                      devicePlatform = '-NOT-SELECTED-';
+                  } catch (e) {
+                      logger.error(" error initializing configs " + e);
+                  }
+                  pcloudyConnectorServices.AuthenticateUser(email, apiKey).then(function(resp) {
+                      //logger.log(JSON.stringify(resp));
+                      var response = JSON.parse(resp);
+                      if(response.result.hasOwnProperty('error')){
+                          logger.error("Error in Authenticating : "+response.result.error);
+                          process.exit(0);
+                      } else {
+                          logger.info(' token  ====== > ' + response.result.token);
+                          token = response.result.token; //saved in global variable
 
-                      switch (platformName) {
-                          case '1':
-                          devicePlatform = 'Android';
-                          break;
-                      }
-                      logger.info('Chosen platform ' + devicePlatform);
-                      var present = false;
-                                      pcloudyConnectorServices.GetAvailableApps(token, 0, 'all').then(function(filesinDrive) {
-                                          var alreadyPresentfiles = JSON.parse(filesinDrive);
-                                          alreadyPresentfiles = alreadyPresentfiles.result.files;
-                                          //logger.info('op '+JSON.stringify(alreadyPresentfiles));
-                                          if(alreadyPresentfiles.hasOwnProperty('error')){
-                                              logger.error("getAvailable apps Error : "+alreadyPresentfiles.error);
-                                              pointer.terminate();
-                                          }
-                                          else{
+                              var platformName = configs.platform,
+                              devicePlatform = '-NOT-SELECTED-';
 
-                                              for (var k = 0, len = alreadyPresentfiles.length; k < len; k++) {
-                                                  var cloudfile = alreadyPresentfiles[k]['file'];
-                                                  //logger.log(" cloudfile : "+cloudfile + " app "+app);
-                                                  if (cloudfile == app) {
-                                                      present = true;
-                                                      logger.info("App with Same name '" + cloudfile + "' already present in pCloudy Cloud Drive");
-                                                      break;
-                                                  }
-
-                                                  if(k == (len-1)){
-                                                    logger.debug("last "+k + " exit ");
-                                                    //pointer.terminate()
-                                                  }
-                                              }
-                                              if(!present){
-                                                  //if app is not present in pcloudy cloud drive
-                                                  var apppath = __dirname+'/'+app;//current directory
-                                                  logger.info('=============Uploading file ============== '+apppath);
-                                                  pcloudyConnectorServices.UploadApp(token, app, 'raw', 'all').then(function(uploadStatus) {
-                                                      var status = JSON.parse(uploadStatus),uploadedFile = status.result.file;
-                                                      status = status.result;
-                                                      logger.info('Upload Status : ' + JSON.stringify(status));
-                                                      try {
-                                                      if(status.hasOwnProperty('error')){
-                                                          logger.error("Error while uploading app : "+status.error);
-                                                          pointer.terminate();
-                                                      }
-                                                      else{
-                                                          if (status.code == 200) {
-                                                              logger.info('Upload Success for file : ' + status.file);
-                                                              //core
-                                                              pointer.appiumCore(token,devicePlatform,uploadedFile,configs).then(function(appiumLaunchStatus){
-                                                                  logger.info("Status of pcloudy Appium Service Launch == > "+appiumLaunchStatus.status);
-                                                              },function(appiumLaunchErr){
-                                                                  logger.error("Service Launch error : "+appiumLaunchErr);
-                                                                  var releaseStat = JSON.parse(appiumLaunchErr);
-                                                                  logger.error('Error Status of Appium session release : '+releaseStat.result.msg);
-                                                              })
-                                                              //core
-                                                          }else{
-                                                              logger.info('could not upload  file : ' + status.file );
-                                                              pointer.terminate();
-                                                          }
-                                                      }//else
-
-                                                  }catch(err){
-                                                      logger.debug("upload app sec err "+err);
-                                                  }
-                                                  }, function(uploadErr) {
-                                                      logger.info(' uploadErr Error ' + JSON.stringify(uploadErr));
-                                                  })
-                                              } else {
-                                                  //without upload when app is already present in pcloudy cloud drive
-                                                  //core
-                                                  pointer.appiumCore(token,devicePlatform,app,configs).then(function(appiumLaunchStatus){
-                                                      logger.info("Status of pcloudy Appium Service Launch == > "+appiumLaunchStatus.status);
-                                                  },function(appiumLaunchErr){
-                                                      logger.debug("appium core reject 2 : "+appiumLaunchErr);
-                                                      logger.error("Service Launch error : "+JSON.stringify(appiumLaunchErr));
+                              switch (platformName) {
+                                  case '1':
+                                  devicePlatform = 'Android';
+                                  break;
+                              }
+                              logger.info('Chosen platform ' + devicePlatform);
+                              var present = false;
+                                              pcloudyConnectorServices.GetAvailableApps(token, 0, 'all').then(function(filesinDrive) {
+                                                  var alreadyPresentfiles = JSON.parse(filesinDrive);
+                                                  alreadyPresentfiles = alreadyPresentfiles.result.files;
+                                                  //logger.info('op '+JSON.stringify(alreadyPresentfiles));
+                                                  if(alreadyPresentfiles.hasOwnProperty('error')){
+                                                      logger.error("getAvailable apps Error : "+alreadyPresentfiles.error);
                                                       pointer.terminate();
-                                                  })
-                                                  //core
-                                              }
-                                         }//getapps
-                                      }, function(getAppsErr) {
-                                          logger.debug("getAvailable apps Error : " + JSON.stringify(getAppsErr));
-                                          pointer.terminate();
-                                      })
-                 // }) //read line
-              }//else
-          }, function(err) {
-              logger.debug("Error in Authenticating "+JSON.stringify(err));
-              pointer.terminate();
-          })
-      }, function(errRead) {
-          logger.warn('error reading config ' + errRead);
-          pointer.terminate();
-      })
+                                                  }
+                                                  else{
+
+                                                      for (var k = 0, len = alreadyPresentfiles.length; k < len; k++) {
+                                                          var cloudfile = alreadyPresentfiles[k]['file'];
+                                                          //logger.log(" cloudfile : "+cloudfile + " app "+app);
+                                                          if (cloudfile == app) {
+                                                              present = true;
+                                                              logger.info("App with Same name '" + cloudfile + "' already present in pCloudy Cloud Drive");
+                                                              break;
+                                                          }
+
+                                                          if(k == (len-1)){
+                                                            logger.debug("last "+k + " exit ");
+                                                            //pointer.terminate()
+                                                          }
+                                                      }
+                                                      if(!present){
+                                                          //if app is not present in pcloudy cloud drive
+                                                          var apppath = __dirname+'/'+app;//current directory
+                                                          logger.info('=============Uploading file ============== '+apppath);
+                                                          pcloudyConnectorServices.UploadApp(token, app, 'raw', 'all').then(function(uploadStatus) {
+                                                              var status = JSON.parse(uploadStatus),uploadedFile = status.result.file;
+                                                              status = status.result;
+                                                              logger.info('Upload Status : ' + JSON.stringify(status));
+                                                              try {
+                                                              if(status.hasOwnProperty('error')){
+                                                                  logger.error("Error while uploading app : "+status.error);
+                                                                  pointer.terminate();
+                                                              }
+                                                              else{
+                                                                  if (status.code == 200) {
+                                                                      logger.info('Upload Success for file : ' + status.file);
+                                                                      //core
+                                                                      pointer.appiumCore(token,devicePlatform,uploadedFile,configs).then(function(appiumLaunchStatus){
+                                                                          logger.info("Status of pcloudy Appium Service Launch == > "+appiumLaunchStatus.status);
+                                                                          resolve(appiumLaunchStatus);
+                                                                          logger.log("resolving from connector , check the response in wdio.android.conf "+JSON.stringify(appiumLaunchStatus));
+                                                                      },function(appiumLaunchErr){
+                                                                          logger.error("Service Launch error : "+appiumLaunchErr);
+                                                                          var releaseStat = JSON.parse(appiumLaunchErr);
+                                                                          logger.error('Error Status of Appium session release : '+releaseStat.result.msg);
+                                                                          reject(appiumLaunchErr);
+                                                                      })
+                                                                      //core
+                                                                  }else{
+                                                                      logger.info('could not upload  file : ' + status.file );
+                                                                      pointer.terminate();
+                                                                  }
+                                                              }//else
+
+                                                          }catch(err){
+                                                              logger.debug("upload app sec err "+err);
+                                                          }
+                                                          }, function(uploadErr) {
+                                                              logger.info(' uploadErr Error ' + JSON.stringify(uploadErr));
+                                                          })
+                                                      } else {
+                                                          //without upload when app is already present in pcloudy cloud drive
+                                                          //core
+                                                          pointer.appiumCore(token,devicePlatform,app,configs).then(function(appiumLaunchStatus){
+                                                              logger.info("Status of pcloudy Appium Service Launch == > "+appiumLaunchStatus.status);
+                                                              resolve(appiumLaunchStatus);
+                                                          },function(appiumLaunchErr){
+                                                              logger.debug("appium core reject 2 : "+appiumLaunchErr);
+                                                              logger.error("Service Launch error : "+JSON.stringify(appiumLaunchErr));
+                                                              reject(appiumLaunchErr);
+                                                              //pointer.terminate();
+                                                          })
+                                                          //core
+                                                      }
+                                                 }//getapps
+                                              }, function(getAppsErr) {
+                                                  logger.debug("getAvailable apps Error : " + JSON.stringify(getAppsErr));
+                                                  pointer.terminate();
+                                              })
+                         // }) //read line
+                      }//else
+                  }, function(err) {
+                      logger.debug("Error in Authenticating "+JSON.stringify(err));
+                      pointer.terminate();
+                  })
+              }, function(errRead) {
+                  logger.warn('error reading config ' + errRead);
+                  pointer.terminate();
+              })
+          }catch(appiumInterfaceError){
+              logger.log("appiumInterfaceError "+appiumInterfaceError);
+          }
+        })
+      return promise;  
     },
     appiumCore : function(token, platform, uploadedApp, configs) {
           logger.debug(" token " + token +" p " + platform + " a " + uploadedApp);
@@ -162,7 +174,7 @@ module.exports = function appiumPcloudy() {
                       availabledevs = [],
                       sessionname = '';
                       if (allDevsavilable.length) {
-                         
+
                       } else {
                           logger.warn(" == There no devices available at this time try to book after some time == ");
                           pointer.terminate();
@@ -187,7 +199,7 @@ module.exports = function appiumPcloudy() {
                               pcloudyConnectorServices.BookDevicesForAppium(devDetails.token, 1, chosenDevs, platform, 'pcloudytest-' + platform, "true").then(function(bookDevstatus) {
                                   console.log('book devices ' + JSON.stringify(bookDevstatus));
                                   var bookedDevDetails = JSON.parse(bookDevstatus);
-                                  
+
                                   bookedDevDetails = bookedDevDetails.result;
                                   if(bookedDevDetails.hasOwnProperty('error')){
                                       logger.error("Error while booking devices : "+bookedDevDetails.error);
@@ -207,7 +219,7 @@ module.exports = function appiumPcloudy() {
                                                         if(initHubresp.hasOwnProperty('error')){
                                                             console.log('if has own property');
                                                             logger.error("Error in initiating Appium hub "+initHubresp.error);
-                                                            reject(initHubresp.error);
+                                                            reject({'error':initHubresp.error});
                                                             //terminate();
                                                         } else {
                                                             pcloudyConnectorServices.getAppiumEndPoint(initHubresp.token).then(function(getAppiumEndPointstat) {
@@ -217,11 +229,13 @@ module.exports = function appiumPcloudy() {
                                                                 endPoint = endPoint.result;
                                                                 if(endPoint.hasOwnProperty('error')){
                                                                     logger.error("getAppiumEndPoint Error : "+endPoint.error);
-                                                                    reject(endPoint.error);
+                                                                    reject({'error':endPoint.error});
                                                                 } else {
                                                                     //logger.info(JSON.stringify(endPoint));
                                                                     logger.info("\n ===================== Started Appium and Received Endpoint ================== \n ");
                                                                     logger.info(" endpoint  ==> " + endPoint.endpoint);
+                                                                    resolve({'result':endPoint});
+                                                                    logger.log("resolved : "+JSON.stringify(endPoint));
                                                                     var options = {};
                                                                     try{
                                                                     var totalBokkedDevs = bookedDevices.length;
@@ -259,9 +273,9 @@ module.exports = function appiumPcloudy() {
                                                                             //var client = webdriverio.remote(options)
                                                                             //.init().saveScreenshot(configs.screenshotPath + '/pcloudy-' + i.manufacturer + '-' + i.model + '-' + i.version + '-' + i.capabilities.deviceName + '-' + unixTime + '.png');
                                                                             logger.info("*################################################### Add your Appium Code Here  #####################################*");
-                                                                           
 
-                                                                            
+
+
                                                                            model = i.model,rid = i.rid;
                                                                            /* setTimeout(function(){
                                                                                 logger.info('Going to end webdriver client of '+model);
@@ -281,29 +295,14 @@ module.exports = function appiumPcloudy() {
 
                                                                             },60000)*/
                                                                             /*################################################## Add your code ################################################*/
-                                                                            console.log("hi jas");
-                                                                            //const jhkasdfjhlhasdf = require("./wdio.android.conf.js").fork;
 
-                                                                            const spawn = require('child_process').spawn;
-const ls = spawn('./node_modules/.bin/wdio', ['wdio.android.conf.js', '--suite=sanity']);
-
-ls.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
-});
-
-ls.stderr.on('data', (data) => {
-    console.log(`stderr: ${data}`);
-});
-
-ls.on('close', (code) => {
-    console.log(`child process exited with code ${code}`);
-});
 
 
                                                                             logger.info(" Webdriver Initiated for  : " + i.model);
                                                                             if(bookedDevices[index + 1]){
                                                                                 var next = bookedDevices[index + 1].manufacturer+'--'+bookedDevices[index + 1].model;
-                                                                                logger.debug("Webdriver Init Next : " + ((bookedDevices.length - 1 === index) ? resolve({'status':'done'}) : next));
+                                                                                //logger.debug("Webdriver Init Next : " + ((bookedDevices.length - 1 === index) ? resolve({'status':'done','endpoint':endPoint.endpoint,'inititatedDevs':bookedDevices}) : next));
+                                                                                //commenting resolve. this would have resolved at last item of booked devices.
                                                                             }
                                                                         })
                                                                     }catch(errrr){
@@ -312,17 +311,17 @@ ls.on('close', (code) => {
                                                                 }
                                                             }, function(getAppiumEndPointErr) {
                                                                 logger.Error(" getAppiumEndPointErr : "+JSON.stringify(getAppiumEndPointErr));
-                                                                reject(getAppiumEndPointErr);
+                                                                reject({'error':getAppiumEndPointErr});
                                                             })
                                                         }
                                                     }, function(initAppiumHubForAppErr) {
                                                         logger.error('initAppiumHubForAppErr ' + JSON.stringify(initAppiumHubForAppErr));
-                                                        reject(initAppiumHubForAppErr);
+                                                        reject({'error':initAppiumHubForAppErr});
                                                     })
                                   }//else
                           }, function(bookdevErr) {
                               logger.debug('bookdevErr ' + JSON.stringify(bookdevErr));
-                              reject(bookdevErr);
+                              reject({'error':bookdevErr});
                           })
                   } catch (exp) {
                       logger.info("Err in appium core : " + exp);
@@ -330,7 +329,7 @@ ls.on('close', (code) => {
               }//else
           }, function(getDevErr) {
               logger.debug('getDevices Err : ' + JSON.stringify(getDevErr));
-              reject(getDevErr);
+              reject({'error':getDevErr});
           })
       }catch(err){
           logger.error("Error : "+err);
@@ -356,7 +355,7 @@ ls.on('close', (code) => {
       releasePCloudy: function(){
           console.log('after the script ----------- RELEASE' + rid);
           logger.info('Going to end webdriver client of '+model);
-         
+
           pcloudyConnectorServices.releaseAppiumsession(token,rid,0).then(function(releaseAppiumsession){
               logger.info('\n\n Releasing the Appium Session of '+ model);
               var releaseStat = JSON.parse(releaseAppiumsession);

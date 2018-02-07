@@ -10,10 +10,10 @@ exports.config = merge(baseTradie.config, {
       // './specs/lead_price_feedback/lead_price_feedback_spec.js',
       // '../shared/specs/message_centre/messaging_spec.js',
       // '../shared/specs/message_centre/attachment_spec.js',
-      //'./specs/login/successful_login_spec.js'
-      './specs/login/unsuccessful_login_spec.js'
+       './specs/login/successful_login_spec.js'
+       // './specs/login/unsuccessful_login_spec.js'
      //'./specs/invites_accept_spec.js'
-
+      
     ],
     login: ['./specs/login_system_spec.js'],
     messageCentre: ['../shared/specs/message_centre/attachment_spec.js',
@@ -33,16 +33,16 @@ exports.config = merge(baseTradie.config, {
   appPackage: 'com.hip.tradie.android',
   appActivity: '.ui.MainActivity',
   onPrepare(config, capabilities) {
-    console.log("on prepare ...");
+  
+    var AppiumpCloudy = require('./sampleTest');
+    instance = new AppiumpCloudy();
+    instance.appiumInterface(__dirname + '/configs/config-android.json');
   },
   before(capabilities, specs) {
-    console.log("on before ...");
     const custComs = require('../shared/lib/custom_commands.js');
     custComs.addCustCommands('android', process.cwd());
   },
   onComplete() {
-   
-      console.log("on complete ...");
     const AppiumpCloudy = require('./sampleTest');
     instance = new AppiumpCloudy();
     instance.releasePCloudy();

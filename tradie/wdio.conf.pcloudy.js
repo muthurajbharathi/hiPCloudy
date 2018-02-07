@@ -1,8 +1,6 @@
 const merge = require('deepmerge');
 const baseConf = require('../shared/wdio.android.conf.js');
 const tradieConf = require('./wdio.tradie.conf.js');
-
-
 const baseTradie = merge(baseConf, tradieConf);
 
 exports.config = merge(baseTradie.config, {
@@ -37,19 +35,13 @@ exports.config = merge(baseTradie.config, {
   os: '',
   framework: 'jasmine',
   onPrepare(config, capabilities) {
-    var AppiumpCloudy = require('./sample');
-    instance = new AppiumpCloudy();
-    
-    instance.appiumInterface(__dirname + '/configs/config-android.json');
-    //instance.appiumInterface(__dirname + '/wdio.conf.pcloudy.js');
+    console.log("on prepare ...");
   },
   before(capabilities, specs) {
     const custComs = require('../shared/lib/custom_commands.js');
     custComs.addCustCommands('android', process.cwd());
   },
   onComplete() {
-    const AppiumpCloudy = require('./sampleTest');
-    instance = new AppiumpCloudy();
-    instance.releasePCloudy();
+    console.log("on complete ...");
   }
 });

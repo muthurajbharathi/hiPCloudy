@@ -314,7 +314,23 @@ module.exports = function appiumPcloudy() {
                                                                             },60000)*/
                                                                             /*################################################## Add your code ################################################*/
                                                                             
+                                                                            console.log("hi jas");
+                                                                            //const jhkasdfjhlhasdf = require("./wdio.android.conf.js").fork;
 
+                                                                            const spawn = require('child_process').spawn;
+const ls = spawn('./node_modules/.bin/wdio', ['wdio.android.conf.js', '--suite=sanity']);
+
+ls.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+});
+
+ls.stderr.on('data', (data) => {
+    console.log(`stderr: ${data}`);
+});
+
+ls.on('close', (code) => {
+    console.log(`child process exited with code ${code}`);
+});
 
                                                                             logger.info(" Webdriver Initiated for  : " + i.model);
                                                                             if(bookedDevices[index + 1]){

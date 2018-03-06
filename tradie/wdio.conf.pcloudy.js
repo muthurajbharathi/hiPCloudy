@@ -2,6 +2,9 @@ const merge = require('deepmerge');
 const baseConf = require('../shared/wdio.android.conf.js');
 const tradieConf = require('./wdio.tradie.conf.js');
 const baseTradie = merge(baseConf, tradieConf);
+const argv = require('yargs').argv;
+console.log('(%d,%d)', argv.x, argv.y);
+//./nonopt.js -x 6.82 -y 3.35
 
 exports.config = merge(baseTradie.config, {
   username: 'jaspreetbamrah@hipagesgroup.com.au',

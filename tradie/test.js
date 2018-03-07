@@ -8,6 +8,21 @@ try {
     success.bookedDevDetails.capabilities.browserName
     success.bookedDevDetails.capabilities.deviceName
     success.endPoint//path
+    const spawn = require('child_process').spawn;
+    const ls = spawn('./node_modules/.bin/wdio', ['wdio.android.conf.js', '--suite=sanity']);
+
+    ls.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+    });
+
+    ls.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`);
+    });
+
+    ls.on('close', (code) => {
+        console.log(`child process exited with code ${code}`);
+    });
+
   },function(failure){
     console.log(" failure case : "+JSON.stringify(failure));
   });

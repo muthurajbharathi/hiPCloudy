@@ -41,7 +41,7 @@ exports.config = merge(baseTradie.config, {
     custComs.addCustCommands('android', process.cwd());
   },
   onComplete() {
-   
+
       console.log("on complete ...");
     const AppiumpCloudy = require('./sampleTest');
     instance = new AppiumpCloudy();

@@ -1,7 +1,7 @@
 var Promise = require('promise'),
 logger = require('./helpers/logger.js'),
 pcloudyConnector = require('./api/pCloudyApiConnector.js');
-var pCloudyConfig = require('./wdio.conf.pcloudy.js');
+//var pCloudyConfig = require('./wdio.conf.pcloudy.js');
 var utils = require('./helpers/utils.js'),
 utilServices = new utils(),
 readline = require('readline'),
@@ -291,7 +291,7 @@ module.exports = function appiumPcloudy() {
       console.log('after the script ----------- RELEASE' + rid);
       logger.info('Going to end webdriver client of '+model);
 
-      pcloudyConnectorServices.releaseAppiumsession(token,rid,0).then(function(releaseAppiumsession){
+      /*pcloudyConnectorServices.releaseAppiumsession(token,rid,0).then(function(releaseAppiumsession){
         logger.info('\n\n Releasing the Appium Session of '+ model);
         var releaseStat = JSON.parse(releaseAppiumsession);
         releaseStat = releaseStat.result;
@@ -302,7 +302,7 @@ module.exports = function appiumPcloudy() {
         }
       },function(releaseAppiumsessionErr){
         logger.error('\n releaseAppiumsession '+JSON.stringify(releaseAppiumsessionErr));
-      })
+      })*/
     },
     terminate : function(){
       process.exit(0);

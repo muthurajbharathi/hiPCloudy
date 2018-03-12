@@ -6,6 +6,7 @@ const baseTradie = merge(baseConf, tradieConf);
 const argv = require('yargs').argv;
 console.log("--wdio-conf-pcloudy--");
 console.log('(%s,%s,%s,%s)', argv.path, argv.deviceName, argv.browserName, argv.platformName);
+console.log("type of all received command line args ... "+typeof(argv.path) + " deviceName "+typeof(argv.deviceName) + " browserName "+typeof(argv.browserName) + " platformName "+typeof(argv.platformName));
 //./nonopt.js -x 6.82 -y 3.35
 
 exports.config = merge(baseTradie.config, {
@@ -24,8 +25,8 @@ exports.config = merge(baseTradie.config, {
     appActivity: '.ui.MainActivity',
     rotatable: true,
     platformName:'Android',
-    deviceName:'202',
-    browserName:'202'
+    deviceName:argv.deviceName.toString(),
+    browserName:argv.browserName.toString()
   }],
   logLevel: 'verbose',
   logOutput: './log/',
@@ -40,7 +41,7 @@ exports.config = merge(baseTradie.config, {
   count: 1,
   platform: '1',
   os: '',
-  path:'appium/hubble/93chv8rqp254-28679/wd/hub',
+  path:argv.path.toString(),
   framework: 'jasmine',
   onPrepare(config, capabilities) {
     console.log("on prepare ...");

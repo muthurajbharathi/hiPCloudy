@@ -16,7 +16,9 @@ try {
         const spawn = require('child_process').spawn;
         //--path= --browserName= --deviceName= --platformName
         //./node_modules/.bin/wdio ./wdio.conf.pcloudy.js --suite=sanity --path="appium/hubble/93chv8rqp254-28679/wd/hub"  --browserName=202 --deviceName=202 --platformName="Android"
-        const ls = spawn('./node_modules/.bin/wdio wdio.android.conf.js ', [ '--suite=sanity', '--path='+appiumPath, '--browserName='+g[0].capabilities.browserName, '--deviceName='+g[0].capabilities.deviceName]);
+        //const ls = spawn('./node_modules/.bin/wdio ./wdio.conf.pcloudy.js ', ['--suite=sanity','--path='+appiumPath, '--browserName='+g[0].capabilities.browserName, '--deviceName='+g[0].capabilities.deviceName]);
+        console.log("appiumPath "+appiumPath);
+        const ls = spawn('./wdioscript.sh',[appiumPath,g[0].capabilities.browserName.toString(),g[0].capabilities.deviceName.toString()]);
 
         ls.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`);
@@ -28,8 +30,9 @@ try {
 
         ls.on('close', (code) => {
             console.log(`child process exited with code ${code}`);
+            //process.exit(0);
         });
-     }catch(inerr){
+     } catch(inerr){
        console.log("Error : "+inerr);
      }
   },function(failure){

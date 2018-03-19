@@ -201,7 +201,7 @@ module.exports = function appiumPcloudy() {
                 }
                 //logger.debug(devDetails.token + "," + chosenDevs + "," + platform)
                 console.log('before Book Devices for Appium');
-                pcloudyConnectorServices.BookDevicesForAppium(devDetails.token, 1, chosenDevs, platform, 'pcloudytest-' + platform, "true").then(function(bookDevstatus) {
+                pcloudyConnectorServices.BookDevicesForAppium(devDetails.token, 15, chosenDevs, platform, 'pcloudytest-' + platform, "true").then(function(bookDevstatus) {
                   console.log('book devices ' + JSON.stringify(bookDevstatus));
                   var bookedDevDetails = JSON.parse(bookDevstatus);
 

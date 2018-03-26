@@ -5,10 +5,14 @@ const tradieConf = require('./wdio.tradie.conf.js');
 const baseTradie = merge(baseConf, tradieConf);
 const argv = require('yargs').argv;
 console.log("--wdio-conf-pcloudy--");
-console.log('(%s,%s,%s,%s)', argv.path, argv.deviceName, argv.browserName, argv.platformName);
-console.log("type of all received command line args ... "+typeof(argv.path) + " deviceName "+typeof(argv.deviceName) + " browserName "+typeof(argv.browserName) + " platformName "+typeof(argv.platformName));
+console.log('==(%s,%s,%s)', argv.path, argv.deviceName, argv.browserName);
+
+//console.log("type of all received command line args ... "+typeof(argv.path) + " deviceName "+typeof(argv.deviceName) + " browserName "+typeof(argv.browserName));
 //./nonopt.js -x 6.82 -y 3.35
 
+const apitoken = argv.apitoken;
+const resId = argv.rid;
+//const details = argv.details;
 exports.config = merge(baseTradie.config, {
   username: 'muthuraj.bharathi@sstsinc.com',
   password: 'pdfb8wwnf9nfvrwqfxdzq5sn',
